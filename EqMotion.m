@@ -11,3 +11,4 @@ function xdot = EqMotion(t,x)
 				 (CL * q * S - m * g * cos(Gam)) / (m * V)
 				 V * sin(Gam)
 				 V * cos(Gam)];
+end
