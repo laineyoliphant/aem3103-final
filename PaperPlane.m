@@ -24,14 +24,19 @@ CD = CD0 + k * CL^2; % Drag polar
 LD_max = CL/CD; % L/D max
 Alpha =	CL/CLa; % Corresponding Angle of Attack, rad
 
+gamma_1 = -atan(1/LD_max); % Corresponding Flight Path Angle, rad
+gamma_2 = -0.5;
+gamma_3 = 0.4;
+v1 = sqrt(2 * m * g /(rho * S * (CL * cos(gamma_1) - CD * sin(gamma_1))));
+v2 = 2;
+v3 = 7.5; % Corresponding Velocity, m/s
 
-%	d) Effect of Further Increase in Initial Velocity
-	%xo		=	[3*V;0;H;R];
-	%[td,xd]	=	ode23('EqMotion',tspan,xo);
-	
-	%figure
-	%plot(xa(:,4),xa(:,3),xb(:,4),xb(:,3),xc(:,4),xc(:,3),xd(:,4),xd(:,3))
-	%xlabel('Range, m'), ylabel('Height, m'), grid
+H =	2; % Initial height (m)
+R =	0;	% Initial range (m)
+R_max = 25; % Max range (m)
+to = 0;	% Initial time (s)
+tf = 6;	% Final time (s)
+tspan = [to tf]; % Range of time (s)
 
 	%figure
 	%subplot(2,2,1)
