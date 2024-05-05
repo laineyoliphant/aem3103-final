@@ -15,14 +15,15 @@ e =	0.9; % Oswald efficiency factor
 m =	0.003; % Mass (kg)
 g =	9.81; % Gravity (m/s^2)
 rho	= 1.225; % Density at sea level (kg/m^3)
-	
-%	b) Oscillating Glide due to Zero Initial Flight Path Angle
-	%xo		=	[V;0;H;R];
-	%[tb,xb]	=	ode23('EqMotion',tspan,xo);
 
-%	c) Effect of Increased Initial Velocity
-	%xo		=	[1.5*V;0;H;R];
-	%[tc,xc]	=	ode23('EqMotion',tspan,xo);
+k =	1/(pi * e * AR); % Induced drag factor
+CD0 = 0.02;	% Zero-lift drag coefficient
+CLa	= pi * AR/(1 + sqrt(1 + (AR / 2)^2)); % Lift-Coefficient Slope, per rad	
+CL = sqrt(CD0/k);	% CL max 
+CD = CD0 + k * CL^2; % Drag polar
+LD_max = CL/CD; % L/D max
+Alpha =	CL/CLa; % Corresponding Angle of Attack, rad
+
 
 %	d) Effect of Further Increase in Initial Velocity
 	%xo		=	[3*V;0;H;R];
