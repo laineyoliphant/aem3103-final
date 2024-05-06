@@ -4,7 +4,9 @@
   - By: Lainey A. Oliphant
 
   ## Summary of Findings
-#
+
+
+
 
 | Values  | Initial Velocity (m/s)|  Gamma  |
 | ------- | --------------------- | —-------|
