@@ -137,7 +137,7 @@ ylabel('Height (m)');
 grid;   
 
 subplot(2,1,2); 
-hold on;
+hold on; 
 plot(t_avg(2:end), drdt);
 title('Time Derivative of Range for Fitted Trajectories');
 xlabel('Time (s)'); 
