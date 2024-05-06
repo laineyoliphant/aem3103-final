@@ -25,7 +25,7 @@
 
 This is the main code used to perform the various trials, including both computational and visual tasks.
 
-EqMotion.m
+[EqMotion.m](https://github.com/laineyoliphant/aem3103-final/blob/main/EqMotion.m)
 
 This is a function that calculates xdot given the inputted parameters.
 
