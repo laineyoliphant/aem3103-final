@@ -99,3 +99,9 @@ end
 
 t_avg = t_sum/100;
 x_avg = x_sum/100;
+
+% Curve-fitting data and plotting average trajectories
+fit1 = polyfit(t_avg, x_avg(:,4), 5);
+val1 = polyval(fit1, t_avg);
+fit2 = polyfit(t_avg, x_avg(:,3), 5);
+val2 = polyval(fit2, t_avg);
