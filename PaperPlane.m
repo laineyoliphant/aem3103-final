@@ -122,3 +122,7 @@ title('Curve-Fitted Height vs Time');
 xlabel('Time (s)'); 
 ylabel('Height (m)'); 
 grid;
+
+% Calculating and plotting range and height time derivatives
+dhdt = diff(val2)./diff(t_avg);
+drdt = diff(val1)./diff(t_avg);
