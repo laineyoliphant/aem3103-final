@@ -105,3 +105,20 @@ fit1 = polyfit(t_avg, x_avg(:,4), 5);
 val1 = polyval(fit1, t_avg);
 fit2 = polyfit(t_avg, x_avg(:,3), 5);
 val2 = polyval(fit2, t_avg);
+
+figure; % Figure 2
+hold on;
+subplot(2, 1, 1); 
+plot(t_avg, val1);
+title('Curve-Fitted Range vs Time');
+xlabel('Time (s)'); 
+ylabel('Range (m)'); 
+grid;
+
+subplot(2, 1, 2); 
+hold on;
+plot(t_avg, val2);
+title('Curve-Fitted Height vs Time');
+xlabel('Time (s)'); 
+ylabel('Height (m)'); 
+grid;
