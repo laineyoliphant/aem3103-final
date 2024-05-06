@@ -21,7 +21,7 @@
  
   # Code Listing
 
-PaperPlane.m
+[PaperPlane.m](https://github.com/laineyoliphant/aem3103-final/blob/main/PaperPlane.m)
 
 This is the main code used to perform the various trials, including both computational and visual tasks.
 
