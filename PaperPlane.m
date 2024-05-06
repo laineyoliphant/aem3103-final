@@ -126,3 +126,20 @@ grid;
 % Calculating and plotting range and height time derivatives
 dhdt = diff(val2)./diff(t_avg);
 drdt = diff(val1)./diff(t_avg);
+
+figure; % Figure 3
+subplot(2,1,1); 
+hold on;
+plot(t_avg(2:end), dhdt);
+title('Time Derivative of Height for Fitted Trajectories');
+xlabel('Time (s)'); 
+ylabel('Height (m)'); 
+grid;   
+
+subplot(2,1,2); 
+hold on;
+plot(t_avg(2:end), drdt);
+title('Time Derivative of Range for Fitted Trajectories');
+xlabel('Time (s)'); 
+ylabel('Range (m)'); 
+grid;
