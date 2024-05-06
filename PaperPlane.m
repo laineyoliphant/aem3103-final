@@ -2,144 +2,257 @@
 %	Copyright 2005 by Robert Stengel
 %	August 23, 2005
 
-close all; clear; clc;
 
+global C_L C_D s mass grav rho	
 
 % Define all needed variables and equations (using SI units)
 
-global CL CD S m g rho	
+% Aerodynamic properties and assumptions
+mass =	0.003; %(kg)
+AR = 0.86; 
+s =	0.017; % (m^2)
+e =	0.9; 
+k =	1/(pi * e * AR); 
+CD_0 = 0.02; 
 
-S =	0.017; % Reference area (m^2)
-AR = 0.86; % Aspect ratio
-e =	0.9; % Oswald efficiency factor
-m =	0.003; % Mass (kg)
-g =	9.81; % Gravity (m/s^2)
-rho	= 1.225; % Density at sea level (kg/m^3)
+% Derived aerodynamic qualities
+C_L = sqrt(CD_0/k);	
+C_D = CD_0 + k * ((C_L)^2); 
 
-CL_alpha = pi * AR/(1 + sqrt(1 + (AR/2)^2)); 
-k =	1/(pi * e * AR); % Induced drag factor
-CD0 = 0.02;	% Zero-lift drag coefficient
-CL = sqrt(CD0/k);	% CL max 
-CD = CD0 + k * CL^2; % Drag polar
-LD_max = CL/CD; % L/D max
-aoa =	CL/CL_alpha; % Angle of attack
 
-H =	2; % Initial height (m)
-R =	0;	% Initial range (m)
-R_max = 25; % Max range (m)
-to = 0;	% Initial time (s)
-tf = 6;	% Final time (s)
-tspan = [to tf]; % Range of time (s)
+% Atmospheric conditions
+rho	= 1.225; %(kg/m^3)
+grav = 9.81; %(m/s^2)
+
+
+% Range conditions
+initial_range =	0; %(m)
+max_range = 25; %(m)
+
+% Height conditions
+initial_height = 2; %(m)
+
+% Time conditions
+initial_time = 0; %(s)
+final_time = 6;	%(s)
+time_span = [initial_time final_time]; %range of time (s)
+
+
 
 % Variation in simulated parameters (three conditions)
 
-gamma_1 = -atan(1/LD_max); % Corresponding Flight Path Angle, rad
-gamma_2 = -0.5;
-gamma_3 = 0.4;
-v1 = sqrt(2 * m * g /(rho * S * (CL * cos(gamma_1) - CD * sin(gamma_1))));
-v2 = 2;
-v3 = 7.5; % Corresponding Velocity, m/s
+% Define flight path angles conditions 
+min_gamma = -0.5;
+nominal_gamma = -0.18; 
+max_gamma = 0.4;
 
-x0 = [v1; gamma_1; H; R];
-[ta, xa] = ode23('EqMotion', tspan, x0); %Calls EqMotion file
+% Define initial velocity conditions
+min_velocity = 2;
+nominal_velocity = 3.55;
+max_velocity = 7.5; 
 
-x1 = [v1; gamma_2; H; R];
-[tb, xb] = ode23('EqMotion', tspan, x1);
+% Baseline with no variations
+nominal_condition = [nominal_velocity; nominal_gamma; initial_height; initial_range];
+[ta, xa] = ode23('EqMotion', time_span, nominal_condition); %Calls EqMotion file
 
-x2 = [v1; gamma_3; H; R];
-[tc, xc] = ode23('EqMotion', tspan, x2);	
 
-y1 = [v2; gamma_1; H; R];
-[ta2, xa2] = ode23('EqMotion', tspan, y1);
+% Velocity varies
+% Min velocity
+vary_min_velocity = [min_velocity; nominal_gamma; initial_height; initial_range];
+[ta2, xa2] = ode23('EqMotion', time_span, vary_min_velocity);
 
-y2 = [v3; gamma_1; H; R];
-[tb2, xb2] = ode23('EqMotion', tspan, y2);
+% Max velocity
+vary_max_velocity = [max_velocity; nominal_gamma; initial_height; initial_range];
+[tb2, xb2] = ode23('EqMotion', time_span, vary_max_velocity);
+
+
+% Gamma varies
+% Min flight path angle
+vary_min_gamma = [nominal_velocity; min_gamma; initial_height; initial_range];
+[tb, xb] = ode23('EqMotion', time_span, vary_min_gamma);
+
+% Max flight path angle
+vary_max_gamma = [nominal_velocity; max_gamma; initial_height; initial_range];
+[tc, xc] = ode23('EqMotion', time_span, vary_max_gamma);
+
+
 
 % Visualize the different conditions and plot
-figure; % Figure 1
+
+% Figure 1
+% first subplot
+figure; 
 subplot(2,1,1);
 hold on;
-plot(xa(:,4),xa(:,3),'k',xa2(:,4),xa2(:,3),'r',xb2(:,4),xb2(:,3),'g'); %varies v0 condition
+
+% Plots Height vs Range for three different initial velocity condition
+plot(xa(:,4),xa(:,3),'k',xa2(:,4),xa2(:,3),'r',xb2(:,4),xb2(:,3),'g'); 
+
+% Title and labels
 title('Height vs Range for Various Velocities');
 xlabel('Range (m)'); 
 ylabel('Height (m)');
-grid;
-legend(sprintf("Velocity 1 = %g", v1), sprintf("Velocity 2 = %g", v2), sprintf("Velocity 3 = %g", v3));
 
+% Adds grid to first subplot
+grid;
+
+% Adds legend to first subplot and differentiates the three different
+% velocities
+legend(sprintf("Nominal Velocity = %g", nominal_velocity), sprintf("Minimum Velocity = %g", min_velocity), sprintf("Maximum Velocity = %g", max_velocity));
+
+
+% Second subplot
 subplot(2,1,2);
 hold on;
-plot(xa(:,4), xa(:,3),'k', xb(:,4), xb(:,3),'r', xc(:,4), xc(:,3),'g'); % varies FPA condition
+
+% Plots Height vs Range for three different flight path angles
+plot(xa(:,4), xa(:,3),'k', xb(:,4), xb(:,3),'r', xc(:,4), xc(:,3),'g'); 
+
+% Title and axis labels
 title('Height vs Range for Various Flight Path Angles');
 xlabel('Range (m)'); 
 ylabel('Height (m)'); 
+
+% second subplot grid
 grid;
-legend(sprintf("Gamma 1 = %g", gamma_1), sprintf("Gamma 2 = %g", gamma_2), sprintf("Gamma 3 = %g", gamma_3)); 
+
+% Legend for second subplot
+legend(sprintf("Nominal Gamma = %g", nominal_gamma), sprintf("Minimum Gamma = %g", min_gamma), sprintf("Maximum Gamma = %g", max_gamma)); 
+
+
 
 % Conduct randomized trials for simultaneous variations
 figure; 
 hold on;
-t_range = linspace(0, 6, 100);
-t_sum = 0;
-x_sum = 0;
 
+% Creates vector for time range
+range_time = linspace(0, 6, 100);
+
+% Initialize position and time sum
+time_sum = 0;
+position_sum = 0;
+
+
+% Uses for loop to iterate 100 times
 for i = 1:100 
-    randomV = v2 + (v3 - v2) * rand(1);
-    randomGamma = gamma_2 + (gamma_3 - gamma_2) * rand(1);
-    xo = [randomV; randomGamma; H; R];
-    [t_rand, x_rand] = ode23('EqMotion', t_range, xo);
-    t_sum = t_sum + t_rand;
-    x_sum = x_sum + x_rand;
-    plot(x_rand(:,4), x_rand(:,3)); % Figure 2
+
+    % Calculates randomized velocity and flight path angle
+    random_velocity = min_velocity + (max_velocity - min_velocity) * rand(1);
+    random_gamma = min_gamma + (max_gamma - min_gamma) * rand(1);
+
+
+    % Defines initial position based off of random parameters
+    initial_position = [random_velocity; random_gamma; initial_height; initial_range];
+
+    % Calculates random time and position
+    [random_time, random_position] = ode23('EqMotion', range_time, initial_position);
+    
+    % Updates sum of time and position with calculated random time and position
+    time_sum = time_sum + random_time;
+    position_sum = position_sum + random_position;
+
+
+
+    % Plots randomized variables (to be repeated each iteration and cause
+    % multiple lines)
+    plot(random_position(:,4), random_position(:,3)); % Figure 2
+
+    % Title and labels
     title('Trajectory Across One-Hundred Trials with Randomized Values');
     xlabel('Range (m)'); 
     ylabel('Height (m)'); 
+
+    % adds grid to subplot
     grid;
+
 
 end
 
-t_avg = t_sum/100;
-x_avg = x_sum/100;
 
-% Curve-fitting data and plotting average trajectories
-fit1 = polyfit(t_avg, x_avg(:,4), 5);
-val1 = polyval(fit1, t_avg);
-fit2 = polyfit(t_avg, x_avg(:,3), 5);
-val2 = polyval(fit2, t_avg);
+% Calculates average time and position using updated time and position sum
+% values
+average_time = 1/100*(time_sum);
+average_position = 1/100*(position_sum);
 
+
+
+% Calculates curve fitting properites for average time and position from
+% Monte Carlo
+% Fitted for range
+polyfit_1 = polyfit(average_time, average_position(:,4), 5);
+polyval_1 = polyval(polyfit_1, average_time);
+
+% Fitted for height
+polyfit_2 = polyfit(average_time, average_position(:,3), 5);
+polyval_2 = polyval(polyfit_2, average_time);
+
+
+% first subplot
 figure; % Figure 2
 hold on;
 subplot(2, 1, 1); 
-plot(t_avg, val1);
+
+% Plots Curve-fitted Range vs Time
+plot(average_time, polyval_1);
+
+% Title and label
 title('Curve-Fitted Range vs Time');
 xlabel('Time (s)'); 
 ylabel('Range (m)'); 
+
+% Adds grid to first subplot
 grid;
 
+
+% second subplot
 subplot(2, 1, 2); 
 hold on;
-plot(t_avg, val2);
+
+% Plots curve-fitted Height vs Time
+plot(average_time, polyval_2);
+
+% Title and labels
 title('Curve-Fitted Height vs Time');
 xlabel('Time (s)'); 
 ylabel('Height (m)'); 
+
+% Adds grid to second subplot
 grid;
 
-% Calculating and plotting range and height time derivatives
-dhdt = diff(val2)./diff(t_avg);
-drdt = diff(val1)./diff(t_avg);
 
+
+% Calculating and plotting range and height time derivatives
+height_derivative = (diff(polyval_2))./(diff(average_time));
+range_derivative = (diff(polyval_1))./(diff(average_time));
+
+
+% Plots time derivative of height for fitted trajectory
 figure; % Figure 3
 subplot(2,1,1); 
 hold on;
-plot(t_avg(2:end), dhdt);
+
+% Plots dh/dt vs average time from Monte Carlo trial
+plot(average_time(2:end), height_derivative);
+
+% Title and labels
 title('Time Derivative of Height for Fitted Trajectories');
 xlabel('Time (s)'); 
 ylabel('Height (m)'); 
+
+% Add grid to first subplot
 grid;   
 
+% Plots time derivative of range for fitted trajectory
 subplot(2,1,2); 
 hold on; 
-plot(t_avg(2:end), drdt);
+
+% plots dr/dt vs average time from Monte Carlo trial
+plot(average_time(2:end), range_derivative);
+
+% Title and labels
 title('Time Derivative of Range for Fitted Trajectories');
 xlabel('Time (s)'); 
 ylabel('Range (m)'); 
+
+% Adds gridlines to second subplot
 grid;
