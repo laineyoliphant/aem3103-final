@@ -22,9 +22,11 @@
   # Code Listing
 
 PaperPlane.m
+
 This is the main code used to perform the various trials, including both computational and visual tasks.
 
 EqMotion.m
+
 This is a function that calculates xdot given the inputted parameters.
 
 
