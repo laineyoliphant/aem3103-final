@@ -56,12 +56,13 @@ y2 = [v3; gamma_1; H; R];
 [tb2, xb2] = ode23('EqMotion', tspan, y2);
 
 % Visualize the different conditions and plot
-figure; 
+figure; % Figure 1
 subplot(2,1,1);
 hold on;
 plot(xa(:,4),xa(:,3),'k',xa2(:,4),xa2(:,3),'r',xb2(:,4),xb2(:,3),'g'); %varies v0 condition
 title('Height vs Range for Various Velocities');
-xlabel('Range (m)'), ylabel('Height (m)');
+xlabel('Range (m)'); 
+ylabel('Height (m)');
 grid;
 legend(sprintf("Velocity 1 = %g", v1), sprintf("Velocity 2 = %g", v2), sprintf("Velocity 3 = %g", v3));
 
@@ -69,6 +70,32 @@ subplot(2,1,2);
 hold on;
 plot(xa(:,4), xa(:,3),'k', xb(:,4), xb(:,3),'r', xc(:,4), xc(:,3),'g'); % varies FPA condition
 title('Height vs Range for Various Flight Path Angles');
-xlabel('Range (m)'), ylabel('Height (m)'); 
+xlabel('Range (m)'); 
+ylabel('Height (m)'); 
 grid;
 legend(sprintf("Gamma 1 = %g", gamma_1), sprintf("Gamma 2 = %g", gamma_2), sprintf("Gamma 3 = %g", gamma_3)); 
+
+% Conduct randomized trials for simultaneous variations
+figure; 
+hold on;
+t_range = linspace(0, 6, 100);
+t_sum = 0;
+x_sum = 0;
+
+for i = 1:100 
+    randomV = v2 + (v3 - v2) * rand(1);
+    randomGamma = gamma_2 + (gamma_3 - gamma_2) * rand(1);
+    xo = [randomV; randomGamma; H; R];
+    [t_rand, x_rand] = ode23('EqMotion', t_range, xo);
+    t_sum = t_sum + t_rand;
+    x_sum = x_sum + x_rand;
+    plot(x_rand(:,4), x_rand(:,3)); % Figure 2
+    title('Trajectory Across One-Hundred Trials with Randomized Values');
+    xlabel('Range (m)'); 
+    ylabel('Height (m)'); 
+    grid;
+
+end
+
+t_avg = t_sum/100;
+x_avg = x_sum/100;
