@@ -8,11 +8,12 @@
 
 
 
-| Values  | Initial Velocity (m/s)|  Gamma  |
-|---------|-----------------------|-—-------|
-| Nominal |          3.55         |  -0.18  | 
-| Minimum |           2           |  -0.5   |
-| Maximum |          7.5          |   0.4   |
+| Values | Velocity (m/s) | Gamma |
+|----------|----------|----------|
+|  Minimum  |  2   |  -0.5   |
+|  Nominal  |  3.55   |  -0.18   |
+|  Maximum   |  7.5   |  0.4  |
+
 
 
  In this study, I was able to visualize how changing different variables would impact both height and range. From the first figure (see Figures), it is clear that the optimal value to achieve the best range was the nominal value when varying just the flight path angle, gamma. When varying just the initial velocity, however, the highest velocity value was optimal to achieve the best range, not the nominal as expected. From the first graph, each flight path minus the nominal case begins at 2 meters high, fluctuates until about the 10 meter range, then varies linearly until the end of the trial. This results in various peaks and dips in the data trend. This same trend can be seen from the Monte Carlo simulation across the one-hundred trials. 
